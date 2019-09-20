@@ -3,8 +3,6 @@ package design;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
 
 class ProducerConsumerTest {
 	public static void main(String[] args) throws InterruptedException {
@@ -30,12 +28,8 @@ class ProducerConsumerTest {
 
 		private Queue<Integer> queue;
 
-		private ReentrantLock putLock = new ReentrantLock();
-		private Condition notFull = putLock.newCondition();
-
-		private ReentrantLock takeLock = new ReentrantLock();
-		private Condition notEmpty = takeLock.newCondition();
-
+		private Object putLock = new Object();
+		private Object takeLock = new Object();
 		private AtomicInteger count = new AtomicInteger();
 
 		public ProducerConsumer(int capacity) {
@@ -44,65 +38,48 @@ class ProducerConsumerTest {
 		}
 
 		public void put(Integer obj) {
-			putLock.lock();
 			int c = -1;
-			try {
+			synchronized (putLock) {
 				while (count.get() == this.capacity) {
-					System.out.println("当前满了");
-					notFull.await();
+					System.out.println("当前满了!");
+					try {
+						putLock.wait();
+					} catch (InterruptedException e) {
+					}
 				}
 				queue.offer(obj);
-				// 之前为0，现在不为0
 				c = count.getAndIncrement();
-				if (c <= capacity) {
-					notFull.signal();
-				}
-			} catch (Exception e) {
-
-			} finally {
-				putLock.unlock();
+				putLock.notify();
 			}
-
 			if (c == 0) {
-				takeLock.lock();
-				try {
-					notEmpty.signalAll();
-				} finally {
-					takeLock.unlock();
+				synchronized (takeLock) {
+					takeLock.notify();
 				}
 			}
 		}
 
 		public Integer take() {
-			takeLock.lock();
 			Integer res = -1;
 			int c = -1;
-			try {
+
+			synchronized (takeLock) {
 				while (count.get() == 0) {
-					System.out.println("当前为空");
-					notEmpty.await();
+					System.out.println("当前空了!");
+					try {
+						takeLock.wait();
+					} catch (InterruptedException e) {
+					}
 				}
 				res = queue.poll();
-				// 之前满，现在不满了
 				c = count.getAndDecrement();
-				if (c > 1) {
-					notEmpty.signal();
-				}
-			} catch (Exception e) {
-
-			} finally {
-				takeLock.unlock();
+				takeLock.notify();
 			}
 
 			if (c == capacity) {
-				putLock.lock();
-				try {
-					notFull.signalAll();
-				} finally {
-					putLock.unlock();
+				synchronized(putLock) {
+					putLock.notify();
 				}
 			}
-
 			return res;
 		}
 
