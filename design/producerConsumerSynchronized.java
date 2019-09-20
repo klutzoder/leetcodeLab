@@ -49,7 +49,8 @@ class ProducerConsumerTest {
 				}
 				queue.offer(obj);
 				c = count.getAndIncrement();
-				putLock.notify();
+				if (c + 1 < capacity) // 若当前插入后没满
+					putLock.notify();
 			}
 			if (c == 0) {
 				synchronized (takeLock) {
@@ -72,11 +73,12 @@ class ProducerConsumerTest {
 				}
 				res = queue.poll();
 				c = count.getAndDecrement();
-				takeLock.notify();
+				if (c > 1) // 若当前拿出后仍有
+					takeLock.notify();
 			}
 
 			if (c == capacity) {
-				synchronized(putLock) {
+				synchronized (putLock) {
 					putLock.notify();
 				}
 			}

@@ -54,7 +54,7 @@ class ProducerConsumerTest {
 				queue.offer(obj);
 				// 之前为0，现在不为0
 				c = count.getAndIncrement();
-				if (c <= capacity) {
+				if (c + 1 < capacity) {
 					notFull.signal();
 				}
 			} catch (Exception e) {
@@ -85,7 +85,7 @@ class ProducerConsumerTest {
 				res = queue.poll();
 				// 之前满，现在不满了
 				c = count.getAndDecrement();
-				if (c > 1) {
+				if (c > 1) { // 若 c == 1，则减一后变为0，就是空了，所以拿出前必须大于1
 					notEmpty.signal();
 				}
 			} catch (Exception e) {
