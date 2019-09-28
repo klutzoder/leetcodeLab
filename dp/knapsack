@@ -1,0 +1,47 @@
+// unbounded knapsack
+for (int i = 0; i < weights.length; i++) {
+	int weight = weights[i];
+	for (int i = weight; i <= allWeights; i++) {
+		dp[i] = Math.max(dp[i], dp[i-weight]+values[i]);
+	}
+}
+
+// 0-1 knapsack
+for (int i = 0; i < weights.length; i++) {
+	int weight = weights[i];
+	for (int i = allWeights; i >= weight; i++) {
+		dp[i] = Math.max(dp[i], dp[i-weight]+values[i]);
+	}
+}
+
+// leetcode322 coins change I, is unbounded knapsack
+dp[0] = 0;
+for (int coin : coins) {
+	for (int i = coin; i <= amount; i++) {
+		dp[i] = Math.min(dp[i], dp[i-coin]+1);
+	}
+}
+
+// leetcode518 coins change II, is unbounded knapsack
+dp[0] = 1;
+for (int coin : coins) {
+    for (int i = coin; i <= amount; i++) {
+        dp[i] += dp[i-coin];
+    }
+}
+
+// leetcode494 target sum, is 0-1 knapsack
+dp[0] = 1;
+for (int num : nums) {
+    for (int i = target; i >= num; i--) {
+        dp[i] += dp[i-num];
+    }
+}
+
+// leetcode416 Partition Equal Subset Sum, is 0-1 knapsack
+dp[0] = true;
+for (int num : nums) {
+    for (int i = target; i >= num; i--) {
+        dp[i] = dp[i] || dp[i-num];
+    }
+ }
