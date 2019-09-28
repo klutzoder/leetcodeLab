@@ -96,7 +96,7 @@ class ProducerConsumerTest {
 				}
 				res = queue.poll();
 				c = count.getAndDecrement();
-				if (c > 2) {
+				if (c > 1) {
 					takeLock.notify();
 				}
 			}
