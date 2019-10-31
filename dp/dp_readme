@@ -1,0 +1,44 @@
+1. 0/1 Knapsack, 0/1背包，6个题
+0/1 Knapsack
+Equal Subset Sum Partition
+Subset Sum
+Minimum Subset Sum Difference
+Count of Subset Sum
+Target Sum
+
+2. Unbounded Knapsack，无限背包，5个题
+Unbounded Knapsack
+Rod Cutting
+Coin Change
+Minimum Coin Change
+Maximum Ribbon Cut
+
+3. Fibonacci Numbers，斐波那契数列，6个题
+Fibonacci numbers
+Staircase
+Number factors
+Minimum jumps to reach the end
+Minimum jumps with fee
+House thief
+
+4. Palindromic Subsequence，回文子系列，5个题
+Longest Palindromic Subsequence
+Longest Palindromic Substring
+Count of Palindromic Substrings
+Minimum Deletions in a String to make it a Palindrome
+Palindromic Partitioning
+
+5. Longest Common Substring，最长子字符串系列，13个题
+Longest Common Substring
+Longest Common Subsequence
+Minimum Deletions & Insertions to Transform a String into another
+Longest Increasing Subsequence
+Maximum Sum Increasing Subsequence
+Shortest Common Super-sequence
+Minimum Deletions to Make a Sequence Sorted
+Longest Repeating Subsequence
+Subsequence Pattern Matching
+Longest Bitonic Subsequence
+Longest Alternating Subsequence
+Edit Distance
+Strings Interleaving
