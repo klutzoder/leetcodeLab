@@ -7,12 +7,13 @@ class UnionFind {
 
 	public UnionFind(int size) {
 		this.parents = new int[size];
-		Arrays.fill(this.parents, -1);
+		for (int i = 0; i < size; i++) this.parents[i] = i;
 	}
 
 	public int findRoot(int x) {
 		int xRoot = x;
 		while (this.parents[xRoot] != -1) {
+			parents[xRoot] = parents[parents[xRoot]];
 			xRoot = parents[xRoot];
 		}
 		return xRoot;
