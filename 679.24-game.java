@@ -7,7 +7,7 @@ import java.util.ArrayList;
  */
 
 // @lc code=start
-class Solution1 {
+class Solution {
 	public boolean judgePoint24(int[] nums) {
 		ArrayList A = new ArrayList<Double>();
 		for (int v : nums)
@@ -56,8 +56,5 @@ class Solution1 {
 		return false;
 	}
 
-	public static void main(String[] args) {
-		new Solution1().judgePoint24(new int[] { 4, 1, 8, 7 });
-	}
 }
 // @lc code=end

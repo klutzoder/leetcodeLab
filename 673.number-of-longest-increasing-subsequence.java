@@ -40,9 +40,6 @@ class Solution {
         return ans;
 	}
 	
-	public static void main(String[] args) {
-		new Solution1().findNumberOfLIS(new int[]{1,3,5,4,7});
-	}
 }
 // @lc code=end
 
