@@ -45,7 +45,7 @@ import java.util.List;
  */
 
 // @lc code=start
-class Solution1 {
+class Solution {
 
 	private List<Integer>[] graph;
 	private int[] dist;
@@ -86,10 +86,6 @@ class Solution1 {
 			dist[next] = dist[root] - count[next] + graph.length - count[next];
 			preOrder(next, root);
 		}
-	}
-
-	public static void main(String[] args) {
-		new Solution1().sumOfDistancesInTree(6, new int[][]{{0,1}, {0,2}, {2,3}, {2,4}, {2,5}});
 	}
 }
 // @lc code=end
