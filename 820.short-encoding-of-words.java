@@ -49,7 +49,7 @@ import java.util.Map;
  */
 
 // @lc code=start
-class Solution1 {
+class Solution {
 
 	private class TrieNode {
 		TrieNode[] children;
@@ -87,10 +87,6 @@ class Solution1 {
 			}
 		}
 		return ans;
-	}
-
-	public static void main(String[] args) {
-		new Solution1().minimumLengthEncoding(new String[] { "time", "me", "bell" });
 	}
 }
 // @lc code=end
