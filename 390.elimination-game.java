@@ -42,7 +42,7 @@
  */
 
 // @lc code=start
-class Solution1 {
+class Solution {
     public int lastRemaining(int n) {
         boolean left = true;
         int remaining = n;
@@ -59,9 +59,6 @@ class Solution1 {
         return head;
 	}
 	
-	public static void main(String[] args) {
-		new Solution1().lastRemaining(9);
-	}
 }
 // @lc code=end
 
