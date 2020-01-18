@@ -56,7 +56,7 @@ import java.util.Arrays;
  */
 
 // @lc code=start
-class Solution1 {
+class Solution {
     public String shortestSuperstring(String[] A) {
 		if (A == null || A.length == 0) return "";
 		int[][] graph = buildGraph(A);
@@ -83,7 +83,7 @@ class Solution1 {
 	}
 
 	public static void main(String[] args) {
-		int[][] g = new Solution1().buildGraph(new String[]{"bad", "ads", "dsg", "gg"});
+		int[][] g = new Solution().buildGraph(new String[]{"bad", "ads", "dsg", "gg"});
 		for (int i = 0; i < g.length; i++) {
 			System.out.println(Arrays.toString(g[i]));
 		}

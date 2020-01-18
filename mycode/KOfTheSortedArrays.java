@@ -7,7 +7,7 @@ class KOfTheSortedArrays {
 	// merge sort
 	// space: O(1)
 	// time: O(m+n)
-	public int solution1(int[] a, int[] b, int k) {
+	public int solution11(int[] a, int[] b, int k) {
 		if (a == null || b == null || a.length == 0 || b.length == 0)
 			return -1;
 		int len1 = a.length, len2 = b.length;
@@ -40,7 +40,7 @@ class KOfTheSortedArrays {
 		return -1;
 	}
 
-	public int solution2(int[] a, int[] b, int k) {
+	public int solution22(int[] a, int[] b, int k) {
 		if (a == null || a.length == 0 || b == null || b.length == 0)
 			return -1;
 		int len1 = a.length, len2 = b.length;
