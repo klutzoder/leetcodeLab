@@ -48,28 +48,19 @@ class StreamChecker {
         str = new ArrayList<>();
         for (String w : words) {
             buildPrefix(w);
-		}
-		int i = 1;
+        }
     }
     
     public boolean query(char letter) {
         Node cur = prefix;
+        str.add(letter);
         for (int i = str.size()-1; i >= 0; i--) {
             cur = cur.next(str.get(i));
+            if (cur == null) return false;
             if (cur.isWord) return true;
         }
         return false;
-	}
-	
-	public static void main(String[] args) {
-		new StreamChecker(new String[]{"ab", "ba", "aaab", "abab", "baa"});
-	}
+    }
 }
-
-/**
- * Your StreamChecker object will be instantiated and called as such:
- * StreamChecker obj = new StreamChecker(words);
- * boolean param_1 = obj.query(letter);
- */
 // @lc code=end
 
