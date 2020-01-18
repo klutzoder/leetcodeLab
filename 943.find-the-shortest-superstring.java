@@ -1,57 +1,6 @@
-import java.util.Arrays;
-
 /*
  * @lc app=leetcode id=943 lang=java
  *
- * [943] Find the Shortest Superstring
- *
- * https://leetcode.com/problems/find-the-shortest-superstring/description/
- *
- * algorithms
- * Hard (40.89%)
- * Likes:    245
- * Dislikes: 61
- * Total Accepted:    7.7K
- * Total Submissions: 18.8K
- * Testcase Example:  '["alex","loves","leetcode"]'
- *
- * Given an array A of strings, find any smallest string that contains each
- * string in A as a substring.
- * 
- * We may assume that no string in A is substring of another string in A.
- * 
- * 
- * 
- * 
- * Example 1:
- * 
- * 
- * Input: ["alex","loves","leetcode"]
- * Output: "alexlovesleetcode"
- * Explanation: All permutations of "alex","loves","leetcode" would also be
- * accepted.
- * 
- * 
- * 
- * Example 2:
- * 
- * 
- * Input: ["catg","ctaagt","gcta","ttca","atgcatc"]
- * Output: "gctaagttcatgcatc"
- * 
- * 
- * 
- * 
- * 
- * Note:
- * 
- * 
- * 1 <= A.length <= 12
- * 1 <= A[i].length <= 20
- * 
- * 
- * 
- * 
  * 
  */
 
@@ -60,6 +9,49 @@ class Solution {
     public String shortestSuperstring(String[] A) {
 		if (A == null || A.length == 0) return "";
 		int[][] graph = buildGraph(A);
+		int len = A.length, sLen = 1 << len;
+		int[][] dp = new int[sLen][len];
+		int[][] parent = new int[sLen][len];
+		for (int i = 0; i < sLen; i++) {
+			Arrays.fill(dp[i], Integer.MAX_VALUE/2);
+			Arrays.fill(parent[i], -1);
+		}
+		
+		for (int i = 0; i < len; i++) dp[1 << i][i] = A[i].length();
+		// System.out.println("start calcuate");
+		for (int s = 1; s < sLen; s++) {
+			// System.out.printf("%d calcuate\n", s);
+			for (int i = 0; i < len; i++) { // end point
+				if ((s & (1<<i)) == 0) continue; 
+				int prev = s - (1<<i);
+				for (int j = 0; j < len; j++) {
+					if (dp[prev][j] + graph[j][i] < dp[s][i]) {
+						dp[s][i] = dp[prev][j] + graph[j][i];
+						parent[s][i] = j;
+					}
+				}
+			}
+		}
+		int cur = -1, minLen = Integer.MAX_VALUE;
+		for (int i = 0; i < len; i++) {
+			if (dp[sLen-1][i] < minLen) {
+				minLen = dp[sLen-1][i];
+				cur = i;
+			}
+		}
+
+		int s = sLen - 1;
+		String ans = "";
+		while (s != 0) {
+			// System.out.printf("s: %d, cur: %d\n", s, cur);
+			int prev = parent[s][cur];
+			if (prev < 0) ans = A[cur] + ans;
+			else ans = A[cur].substring(A[cur].length() - graph[prev][cur]) + ans;
+			s &= ~(1 << cur);
+			cur = prev;
+		}
+
+		return ans;
 	}
 	
 	private int[][] buildGraph(String[] A) {
@@ -74,19 +66,13 @@ class Solution {
 	}
 
 	private int calCost(String a, String b) {
-		int i = 0, j = 0;
-		while (i < a.length() && a.charAt(i) != b.charAt(j)) i++;
-		while (i < a.length() && j < b.length() && a.charAt(i) == b.charAt(j)) {
-			i++; j++;
+		int len = Math.min(a.length(), b.length());
+		for (int i = 1; i < len; i++) {
+			if (a.substring(a.length()-i) == b.substring(0, i)) {
+				return a.length() - i;
+			}
 		}
-		return b.length() - j;
-	}
-
-	public static void main(String[] args) {
-		int[][] g = new Solution().buildGraph(new String[]{"bad", "ads", "dsg", "gg"});
-		for (int i = 0; i < g.length; i++) {
-			System.out.println(Arrays.toString(g[i]));
-		}
+		return b.length();
 	}
 }
 // @lc code=end
