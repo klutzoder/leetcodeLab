@@ -48,6 +48,7 @@ class ProducerConsumerTest {
 					}
 				}
 				queue.offer(obj);
+				// 获取的是之前的值
 				c = count.getAndIncrement();
 				if (c + 1 < capacity) // 若当前插入后没满
 					putLock.notify();

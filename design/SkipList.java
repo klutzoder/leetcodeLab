@@ -1,122 +1,118 @@
-/**
- */
+package design;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 public class SkipList {
 
-	private static final float SKIPLIST_P = 0.5f;
-	private static final int MAX_LEVEL = 16;
+	// Sentinel
+	// \
+	// level 3: -Inf ----------------------------> 4
+	// level 2: -Inf ------------> 2 ------------> 4
+	// level 1: -Inf ----> 1 ----> 2 ------------> 4
+	// level 0: -Inf ----> 1 ----> 2 ----> 3 ----> 4 : this level is the most
+	// concrete level
+	private static final double DEFAULT_PROB = 0.5;
+	private final Random rand = new Random();
+	private final List<Node> sentinels = new ArrayList<>();
 
-	private int levelCount = 1;
+	{
+		sentinels.add(new Node(Integer.MIN_VALUE));
+	}
 
-	private Node head = new Node(); // 带头链表
+	public boolean search(int target) {
+		Node smallerOrEquals = getSmallerOrEquals(target);
+		return smallerOrEquals.val == target;
+	}
 
-	public Node find(int value) {
-		Node p = head;
-		for (int i = levelCount - 1; i >= 0; --i) {
-			while (p.forwards[i] != null && p.forwards[i].data < value) {
-				p = p.forwards[i];
+	public void add(int num) {
+		Node cur = getSmallerOrEquals(num);
+		// cur 最下层，比他小或者等于 num
+		final Node toInsert = new Node(num);
+		append(cur, toInsert);
+		// populate the level
+		populateLevelUp(toInsert);
+	}
+
+	private void populateLevelUp(final Node toInsert) {
+		Node curPrev = toInsert.left, cur = toInsert;
+
+		while (flipCoin()) {
+			while (curPrev.left != null && curPrev.up == null) {
+				curPrev = curPrev.left;
+			}
+			if (curPrev.up == null) {
+				final Node newSentinel = new Node(Integer.MIN_VALUE);
+				curPrev.up = newSentinel;
+				newSentinel.down = curPrev;
+				sentinels.add(curPrev.up);
+			}
+			curPrev = curPrev.up;
+			final Node newNode = new Node(toInsert.val);
+			cur.up = newNode;
+			newNode.down = cur;
+			cur = cur.up;
+			curPrev.right = cur;
+			cur.left = curPrev;
+		}
+	}
+
+	private void append(Node prev, Node cur) {
+		final Node next = prev.right;
+		prev.right = cur;
+		cur.left = prev;
+		if (next != null) {
+			next.left = cur;
+			cur.right = next;
+		}
+	}
+
+	public boolean erase(int num) {
+		final Node toRemove = getSmallerOrEquals(num);
+		if (toRemove.val != num) {
+			return false;
+		}
+		Node cur = toRemove;
+		while (cur != null) {
+			final Node prev = cur.left, next = cur.right;
+			prev.right = next;
+			if (next != null) {
+				next.left = prev;
+			}
+			cur = cur.up;
+		}
+		return true;
+	}
+
+	private Node getSmallerOrEquals(final int target) {
+		Node cur = getSentinel();
+		while (cur != null) {
+			if (cur.right == null || cur.right.val > target) {
+				if (cur.down == null)
+					break;
+				cur = cur.down;
+			} else {
+				cur = cur.right;
 			}
 		}
-
-		if (p.forwards[0] != null && p.forwards[0].data == value) {
-			return p.forwards[0];
-		} else {
-			return null;
-		}
+		return cur;
 	}
 
-	public void insert(int value) {
-		int level = randomLevel();
-		Node newNode = new Node();
-		newNode.data = value;
-		newNode.maxLevel = level;
-		Node update[] = new Node[level];
-		for (int i = 0; i < level; ++i) {
-			update[i] = head;
-		}
-
-		// record every level largest value which smaller than insert value in update[]
-		Node p = head;
-		for (int i = level - 1; i >= 0; --i) {
-			while (p.forwards[i] != null && p.forwards[i].data < value) {
-				p = p.forwards[i];
-			}
-			update[i] = p;// use update save node in search path
-		}
-
-		// in search path node next node become new node forwords(next)
-		for (int i = 0; i < level; ++i) {
-			newNode.forwards[i] = update[i].forwards[i];
-			update[i].forwards[i] = newNode;
-		}
-
-		// update node hight
-		if (levelCount < level)
-			levelCount = level;
+	private boolean flipCoin() {
+		return rand.nextDouble() < DEFAULT_PROB;
 	}
 
-	public void delete(int value) {
-		Node[] update = new Node[levelCount];
-		Node p = head;
-		for (int i = levelCount - 1; i >= 0; --i) {
-			while (p.forwards[i] != null && p.forwards[i].data < value) {
-				p = p.forwards[i];
-			}
-			update[i] = p;
-		}
-
-		if (p.forwards[0] != null && p.forwards[0].data == value) {
-			for (int i = levelCount - 1; i >= 0; --i) {
-				if (update[i].forwards[i] != null && update[i].forwards[i].data == value) {
-					update[i].forwards[i] = update[i].forwards[i].forwards[i];
-				}
-			}
-		}
-
-		while (levelCount > 1 && head.forwards[levelCount] == null) {
-			levelCount--;
-		}
-
+	private Node getSentinel() {
+		return sentinels.get(sentinels.size() - 1);
 	}
 
-	// 理论来讲，一级索引中元素个数应该占原始数据的 50%，二级索引中元素个数占 25%，三级索引12.5% ，一直到最顶层。
-	// 因为这里每一层的晋升概率是 50%。对于每一个新插入的节点，都需要调用 randomLevel 生成一个合理的层数。
-	// 该 randomLevel 方法会随机生成 1~MAX_LEVEL 之间的数，且 ：
-	// 50%的概率返回 1
-	// 25%的概率返回 2
-	// 12.5%的概率返回 3 ...
-	private int randomLevel() {
-		int level = 1;
+	private static final class Node {
+		private final int val;
+		private Node left, right, up, down;
 
-		while (Math.random() < SKIPLIST_P && level < MAX_LEVEL)
-			level += 1;
-		return level;
-	}
-
-	public void printAll() {
-		Node p = head;
-		while (p.forwards[0] != null) {
-			System.out.print(p.forwards[0] + " ");
-			p = p.forwards[0];
-		}
-		System.out.println();
-	}
-
-	public class Node {
-		private int data = -1;
-		private Node forwards[] = new Node[MAX_LEVEL];
-		private int maxLevel = 0;
-
-		@Override
-		public String toString() {
-			StringBuilder builder = new StringBuilder();
-			builder.append("{ data: ");
-			builder.append(data);
-			builder.append("; levels: ");
-			builder.append(maxLevel);
-			builder.append(" }");
-
-			return builder.toString();
+		private Node(int val) {
+			this.val = val;
 		}
 	}
-
 }
