@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
-class ProducerConsumerTest {
+class ProducerConsumerReentrantLock {
 	public static void main(String[] args) throws InterruptedException {
 		ProducerConsumer pc = new ProducerConsumer(5);
 

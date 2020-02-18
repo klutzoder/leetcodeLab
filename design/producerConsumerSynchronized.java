@@ -4,9 +4,9 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicInteger;
 
-class ProducerConsumerTest {
+class ProducerConsumerSynchronized {
 	public static void main(String[] args) throws InterruptedException {
-		ProducerConsumer pc = new ProducerConsumer(5);
+		ProducerConsumer<Integer> pc = new ProducerConsumer<>(5);
 
 		new Thread(() -> {
 			for (int i = 0; i < 100; i++) {
@@ -23,10 +23,10 @@ class ProducerConsumerTest {
 		Thread.sleep(10000);
 	}
 
-	private static class ProducerConsumer {
+	private static class ProducerConsumer<T> {
 		private int capacity = 0;
 
-		private Queue<Integer> queue;
+		private Queue<T> queue;
 
 		private Object putLock = new Object();
 		private Object takeLock = new Object();
@@ -37,7 +37,7 @@ class ProducerConsumerTest {
 			queue = new LinkedList<>();
 		}
 
-		public void put(Integer obj) {
+		public void put(T obj) {
 			int c = -1;
 			synchronized (putLock) {
 				while (count.get() == this.capacity) {
@@ -60,8 +60,8 @@ class ProducerConsumerTest {
 			}
 		}
 
-		public Integer take() {
-			Integer res = -1;
+		public T take() {
+			T res = null;
 			int c = -1;
 
 			synchronized (takeLock) {
