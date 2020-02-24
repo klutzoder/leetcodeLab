@@ -1,6 +1,3 @@
-import java.util.Arrays;
-import java.util.List;
-
 /*
  * @lc app=leetcode id=315 lang=java
  *
@@ -8,7 +5,7 @@ import java.util.List;
  */
 
 // @lc code=start
-class Solution10 {
+class Solution {
 
 	private class Node {
 		Node left, right;
@@ -43,10 +40,7 @@ class Solution10 {
         }
         return node;
 	}
-	
-	public static void main(String[] args) {
-		new Solution10().countSmaller(new int[]{5,2,6,1});
-	}
+
 }
 // @lc code=end
 
