@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class PriorityQueue {
+public class MyPriorityQueue {
 	
 	private int size;
 	private List<Integer> queue;
 
-	public PriorityQueue() {
+	public MyPriorityQueue() {
 		this.queue = new ArrayList<>();
 		this.size = 0;
 	}
@@ -50,7 +50,7 @@ public class PriorityQueue {
 	}
 
 	public static void main(String[] args) {
-		PriorityQueue p = new PriorityQueue();
+		MyPriorityQueue p = new MyPriorityQueue();
 		Random r = new Random();
 		for (int i = 0; i < 10; i++) {
 			p.offer(r.nextInt(100));
